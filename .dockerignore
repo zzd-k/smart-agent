@@ -1,0 +1,10 @@
+.env
+__pycache__/
+*.pyc
+.git/
+.gitignore
+data/
+*.log
+tests/
+docs/
+投递材料说明.md
