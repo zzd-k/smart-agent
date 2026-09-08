@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SmartAgent · LangGraph Demo</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <span class="logo">◆</span>
+        <div>
+          <h1>SmartAgent</h1>
+          <p>基于 LangGraph 的通用助手 Agent · 工具调用 + 记忆</p>
+        </div>
+      </div>
+      <div class="meta">
+        <span class="badge" id="modelBadge">loading…</span>
+        <span class="badge mem" id="memBadge" title="Agent 长期记忆（facts）">记忆 0 条</span>
+        <button id="newChat" class="btn-ghost">新会话</button>
+      </div>
+    </header>
+
+    <main class="chat" id="chat">
+      <div class="welcome" id="welcome">
+        <h2>你好，我是 SmartAgent 👋</h2>
+        <p>我能调用工具帮你做这些事：</p>
+        <div class="cards">
+          <div class="card"><span class="icon">🧮</span><b>精确计算</b><small>试试：帮我算 1200×0.85 是多少？</small></div>
+          <div class="card"><span class="icon">🕐</span><b>时间日期</b><small>试试：今天星期几？现在几点？</small></div>
+          <div class="card"><span class="icon">💾</span><b>长期记忆</b><small>试试：记住我叫小明，我喜欢简洁的回答</small></div>
+          <div class="card"><span class="icon">🌐</span><b>联网搜索</b><small>配置了 Tavily Key 后可用实时搜索</small></div>
+        </div>
+        <p class="tip" id="envTip"></p>
+      </div>
+    </main>
+
+    <footer class="composer">
+      <textarea id="input" rows="1" placeholder="输入消息，Enter 发送，Shift+Enter 换行"></textarea>
+      <button id="send" class="btn-send" aria-label="发送">➤</button>
+    </footer>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
