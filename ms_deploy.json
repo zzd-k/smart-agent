@@ -1,0 +1,11 @@
+{
+  "$schema": "https://modelscope.cn/api/v1/studios/deploy_schema.json",
+  "sdk_type": "docker",
+  "resource_configuration": "platform/2v-cpu-16g-mem",
+  "port": 7860,
+  "environment_variables": [
+    { "name": "OPENAI_API_KEY", "value": "c39c5e7be0c644c18fb09cfee159a5a0.3OqCQcrYtjoQTVE8" },
+    { "name": "OPENAI_BASE_URL", "value": "https://open.bigmodel.cn/api/paas/v4" },
+    { "name": "OPENAI_MODEL", "value": "glm-5.3-flash" }
+  ]
+}
