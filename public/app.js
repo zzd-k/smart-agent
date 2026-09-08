@@ -8,11 +8,103 @@
   const envTip = document.getElementById("envTip");
   const modelBadge = document.getElementById("modelBadge");
   const memBadge = document.getElementById("memBadge");
+  const customBadge = document.getElementById("customBadge");
 
   // 会话隔离：localStorage 记忆 session_id
   const SKEY = "smartagent_session";
+  const CKEY = "smartagent_cfg"; // 自填模型配置（仅本机浏览器）
   let sessionId = localStorage.getItem(SKEY) || newSession();
   let busy = false;
+
+  // ---------- 自填模型配置 ----------
+  const PRESETS = {
+    zhipu: { base_url: "https://open.bigmodel.cn/api/paas/v4", model: "glm-5.3-flash" },
+    deepseek: { base_url: "https://api.deepseek.com/v1", model: "deepseek-chat" },
+    moonshot: { base_url: "https://api.moonshot.cn/v1", model: "moonshot-v1-8k" },
+    openai: { base_url: "https://api.openai.com/v1", model: "gpt-4o-mini" },
+  };
+
+  let cfg = loadCfg();
+
+  function loadCfg() {
+    try {
+      return JSON.parse(localStorage.getItem(CKEY) || "{}") || {};
+    } catch {
+      return {};
+    }
+  }
+
+  function hasCfg() {
+    return !!(cfg.api_key || cfg.base_url || cfg.model || cfg.tavily_api_key);
+  }
+
+  function applyCfgUI() {
+    const on = hasCfg();
+    customBadge.hidden = !on;
+    if (on && cfg.model) {
+      modelBadge.textContent = cfg.model;
+      modelBadge.title = "自定义模型：" + (cfg.base_url || "");
+    }
+  }
+
+  const modal = document.getElementById("settingsModal");
+  const fBase = document.getElementById("cfgBaseUrl");
+  const fKey = document.getElementById("cfgApiKey");
+  const fModel = document.getElementById("cfgModel");
+  const fTavily = document.getElementById("cfgTavily");
+  const cfgStatus = document.getElementById("cfgStatus");
+
+  function openCfg() {
+    fBase.value = cfg.base_url || "";
+    fKey.value = cfg.api_key || "";
+    fModel.value = cfg.model || "";
+    fTavily.value = cfg.tavily_api_key || "";
+    cfgStatus.textContent = "";
+    modal.hidden = false;
+    fKey.focus();
+  }
+  function closeCfg() {
+    modal.hidden = true;
+  }
+
+  document.getElementById("settingsBtn").addEventListener("click", openCfg);
+  document.getElementById("closeCfg").addEventListener("click", closeCfg);
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) closeCfg();
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && !modal.hidden) closeCfg();
+  });
+
+  document.querySelectorAll(".chip[data-preset]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const p = PRESETS[btn.dataset.preset];
+      if (!p) return;
+      fBase.value = p.base_url;
+      fModel.value = p.model;
+      cfgStatus.textContent = `已填入 ${btn.textContent} 的端点与默认模型，请补全 API Key。`;
+    });
+  });
+
+  document.getElementById("saveCfg").addEventListener("click", () => {
+    cfg = {
+      base_url: fBase.value.trim(),
+      api_key: fKey.value.trim(),
+      model: fModel.value.trim(),
+      tavily_api_key: fTavily.value.trim(),
+    };
+    localStorage.setItem(CKEY, JSON.stringify(cfg));
+    applyCfgUI();
+    cfgStatus.textContent = hasCfg() ? "✅ 已保存到本机，下次对话生效。" : "已清除自填配置，将使用服务端默认。";
+  });
+
+  document.getElementById("clearCfg").addEventListener("click", () => {
+    cfg = {};
+    localStorage.removeItem(CKEY);
+    fBase.value = fKey.value = fModel.value = fTavily.value = "";
+    applyCfgUI();
+    cfgStatus.textContent = "已清除自填配置，将使用服务端默认。";
+  });
 
   function newSession() {
     const sid = crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36);
@@ -24,11 +116,20 @@
   fetch("/api/health")
     .then((r) => r.json())
     .then((d) => {
-      if (d.model) modelBadge.textContent = d.model;
+      if (d.model && !hasCfg()) modelBadge.textContent = d.model;
+      applyCfgUI();
       if (d.status === "need_config") {
-        envTip.textContent = "⚠️ " + d.issues.join(" ");
-        envTip.style.color = "#ffb86b";
-        modelBadge.style.color = "#ffb86b";
+        if (hasCfg()) {
+          envTip.textContent = "当前使用你自填的模型配置（服务端未预置 Key）。";
+          envTip.style.color = "#43d9a3";
+        } else {
+          envTip.textContent = "⚠️ 服务端未配置 Key。可点右上角「⚙ 设置」填入自己的 API Key 后使用。";
+          envTip.style.color = "#ffb86b";
+          modelBadge.style.color = "#ffb86b";
+        }
+      } else if (hasCfg()) {
+        envTip.textContent = "当前使用你自填的模型配置。";
+        envTip.style.color = "#43d9a3";
       }
     })
     .catch(() => {
@@ -193,10 +294,21 @@
     };
 
     try {
+      // 若用户自填了模型配置，随请求携带（服务端不持久化）
+      const body = { message: text, session_id: sessionId };
+      if (hasCfg()) {
+        Object.assign(body, {
+          api_key: cfg.api_key || undefined,
+          base_url: cfg.base_url || undefined,
+          model: cfg.model || undefined,
+          tavily_api_key: cfg.tavily_api_key || undefined,
+        });
+      }
+
       const resp = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: text, session_id: sessionId }),
+        body: JSON.stringify(body),
       });
 
       if (!resp.ok) {
@@ -251,6 +363,10 @@
                 d.appendChild(res);
               }
             }
+          } else if (type === "error") {
+            thinking.remove();
+            bubble.textContent = "⚠️ " + (payload.message || "模型调用失败");
+            gotAny = true;
           } else if (type === "done") {
             sessionId = payload.session_id || sessionId;
             localStorage.setItem(SKEY, sessionId);

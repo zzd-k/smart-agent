@@ -19,6 +19,8 @@
       <div class="meta">
         <span class="badge" id="modelBadge">loading…</span>
         <span class="badge mem" id="memBadge" title="Agent 长期记忆（facts）">记忆 0 条</span>
+        <span class="badge custom" id="customBadge" hidden title="当前使用你自填的模型配置">自填配置</span>
+        <button id="settingsBtn" class="btn-ghost" title="模型设置">⚙ 设置</button>
         <button id="newChat" class="btn-ghost">新会话</button>
       </div>
     </header>
@@ -41,6 +43,51 @@
       <textarea id="input" rows="1" placeholder="输入消息，Enter 发送，Shift+Enter 换行"></textarea>
       <button id="send" class="btn-send" aria-label="发送">➤</button>
     </footer>
+  </div>
+
+  <!-- 模型设置：访客可自填 OpenAI 兼容端点与密钥 -->
+  <div class="modal" id="settingsModal" hidden>
+    <div class="modal-card">
+      <div class="modal-head">
+        <h3>模型设置</h3>
+        <button id="closeCfg" class="icon-btn" aria-label="关闭">×</button>
+      </div>
+      <p class="modal-hint">
+        留空则使用服务端默认配置。你填写的 Key <b>仅保存在本机浏览器</b>，
+        每次请求临时携带用于调用模型，<b>服务端不做持久化</b>。
+      </p>
+
+      <label class="field">
+        <span>API Base URL</span>
+        <input id="cfgBaseUrl" type="text" placeholder="https://open.bigmodel.cn/api/paas/v4" autocomplete="off" />
+      </label>
+      <label class="field">
+        <span>API Key</span>
+        <input id="cfgApiKey" type="password" placeholder="sk-... 或 智谱 Key" autocomplete="off" />
+      </label>
+      <label class="field">
+        <span>模型名</span>
+        <input id="cfgModel" type="text" placeholder="glm-5.3-flash" autocomplete="off" />
+      </label>
+      <label class="field">
+        <span>Tavily Key（联网搜索，可选）</span>
+        <input id="cfgTavily" type="password" placeholder="tvly-..." autocomplete="off" />
+      </label>
+
+      <div class="quick">
+        <span>快速填充：</span>
+        <button class="chip" data-preset="zhipu">智谱 GLM</button>
+        <button class="chip" data-preset="deepseek">DeepSeek</button>
+        <button class="chip" data-preset="moonshot">Moonshot</button>
+        <button class="chip" data-preset="openai">OpenAI</button>
+      </div>
+
+      <div class="modal-actions">
+        <button id="clearCfg" class="btn-ghost">清除自填</button>
+        <button id="saveCfg" class="btn-primary">保存</button>
+      </div>
+      <p class="modal-status" id="cfgStatus"></p>
+    </div>
   </div>
 
   <script src="/static/app.js"></script>
