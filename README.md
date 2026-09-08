@@ -6,6 +6,8 @@
 🔗 **在线 Demo**：http://18ec3ab9bff64bc2932f2eaf052fb60b.codebuddy.cloudstudio.run
 （已部署上线，可直接点开体验：计算器 / 时间 / 长期记忆 三类工具调用）
 
+📦 **源码仓库**：https://github.com/zzd-k/smart-agent
+
 | 维度 | 说明 |
 |---|---|
 | 框架 | LangGraph（手写 StateGraph + 条件路由，非黑盒） |
