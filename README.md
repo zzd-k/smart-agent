@@ -3,8 +3,11 @@
 > 一个 **0-1 独立开发落地** 的通用 Agent 案例：知识问答 + 工具调用 + 长期记忆 + Web Demo。
 > 面向岗位要求手写的 LangGraph 状态机实现，非 prebuilt 黑盒拼接。
 
-🔗 **在线 Demo**：http://18ec3ab9bff64bc2932f2eaf052fb60b.codebuddy.cloudstudio.run
+🔗 **在线 Demo**：http://11bf428f5f8d4310beb137e019752726.codebuddy.cloudstudio.run
 （已部署上线，可直接点开体验：计算器 / 时间 / 长期记忆 三类工具调用）
+
+> 💡 页面右上角「⚙ 设置」可填入**自己的 OpenAI 兼容端点与密钥**（支持智谱 / DeepSeek / Moonshot / OpenAI 等）。
+> 密钥仅保存在本机浏览器，随请求临时携带，服务端不持久化、不写日志。
 
 📦 **源码仓库**：https://github.com/zzd-k/smart-agent
 

@@ -5,7 +5,7 @@
 
 ## 在线 Demo（可外链，直接点开）
 
-**http://18ec3ab9bff64bc2932f2eaf052fb60b.codebuddy.cloudstudio.run**
+**http://11bf428f5f8d4310beb137e019752726.codebuddy.cloudstudio.run**
 
 已部署上线，国内可直接访问。建议同时在附件里放一段 30 秒录屏，防止链接失效或沙箱休眠（长时间无访问会休眠，首次打开需等待唤醒）。
 
