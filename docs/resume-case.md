@@ -5,7 +5,7 @@
 
 ## 在线 Demo（可外链，直接点开）
 
-**http://11bf428f5f8d4310beb137e019752726.codebuddy.cloudstudio.run**
+**https://modelscope.cn/studios/zx669791/smartAgent**（魔搭创空间，永久地址，国内直连）
 
 已部署上线，国内可直接访问。建议同时在附件里放一段 30 秒录屏，防止链接失效或沙箱休眠（长时间无访问会休眠，首次打开需等待唤醒）。
 
